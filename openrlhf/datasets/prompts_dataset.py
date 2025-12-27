@@ -1,12 +1,18 @@
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-
-def preprocess_data(data, input_template=None, input_key="input", label_key=None, apply_chat_template=None) -> str:
+SYSTEM_PROMPT='''
+You are a coding expert. Given a competition-level coding problem, you need to write a C++17 program to solve it. You may start by outlining your thought process. In the end, please provide the complete code in a code block enclosed with ``` ```.
+'''
+def preprocess_data(data, input_template=None, input_key="input", label_key="id", apply_chat_template=None) -> str:
     if apply_chat_template:
         chat = data[input_key]
         if isinstance(chat, str):
-            chat = [{"role": "user", "content": chat}]
+            chat = [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": 'The coding problem is: ' + chat + '/no_think'}
+                # {"role": "user", "content": 'The coding problem is: ' + chat}
+                ]
         prompt = apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
     else:
         prompt = data[input_key]

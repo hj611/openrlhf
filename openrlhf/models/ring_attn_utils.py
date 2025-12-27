@@ -112,7 +112,8 @@ def unpad_and_slice_tensor(sequences, attention_mask, ring_attn_group):
         tuple: Processed sequences and related tensors for ring attention
     """
     rolled_sequences = torch.roll(sequences, shifts=-1, dims=1)
-    sequences, indices, cu_seqlens, _, _ = unpad_input(sequences.unsqueeze(-1), attention_mask)
+    # sequences, indices, cu_seqlens, _, _ = unpad_input(sequences.unsqueeze(-1), attention_mask)
+    sequences, indices, cu_seqlens, _ = unpad_input(sequences.unsqueeze(-1), attention_mask)
     sequences = sequences.transpose(0, 1)  # (1, total_seqs)
     rolled_sequences = index_first_axis(
         rearrange(rolled_sequences.unsqueeze(-1), "b s ... -> (b s) ..."), indices
